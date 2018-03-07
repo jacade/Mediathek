@@ -138,25 +138,25 @@ class NDRMediathek(Mediathek):
             # Hamburg
             nodeCount = nodeCount+1
             links = {}
-            links[0] = SimpleLink("https://ndr_fs-lh.akamaihd.net/i/ndrfs_hh@119223/master.m3u8", 0)
+            links[0] = SimpleLink("https://ndrfs-lh.akamaihd.net/i/ndrfs_hh@430231/index_3776_av-p.m3u8", 0)
             self.gui.buildVideoLink(DisplayObject("Hamburg", "", "", "", links, True), self, nodeCount)
 
             # Mecklenburg-Vorpommern
             nodeCount = nodeCount+1
             links = {}
-            links[0] = SimpleLink("https://ndr_fs-lh.akamaihd.net/i/ndrfs_mv@119226/master.m3u8", 0)
+            links[0] = SimpleLink("https://ndrfs-lh.akamaihd.net/i/ndrfs_mv@430232/index_3776_av-p.m3u8", 0)
             self.gui.buildVideoLink(DisplayObject("Mecklenburg-Vorpommern", "", "", "", links, True), self, nodeCount)
 
             # Niedersachsen
             nodeCount = nodeCount+1
             links = {}
-            links[0] = SimpleLink("https://ndr_fs-lh.akamaihd.net/i/ndrfs_nds@119224/master.m3u8", 0)
+            links[0] = SimpleLink("https://ndrfs-lh.akamaihd.net/i/ndrfs_nds@430233/index_3776_av-p.m3u8", 0)
             self.gui.buildVideoLink(DisplayObject("Niedersachsen", "", "", "", links, True), self, nodeCount)
 
             # Schleswig-Holstein
             nodeCount = nodeCount+1
             links = {}
-            links[0] = SimpleLink("https://ndr_fs-lh.akamaihd.net/i/ndrfs_sh@119225/master.m3u8", 0)
+            links[0] = SimpleLink("https://ndrfs-lh.akamaihd.net/i/ndrfs_sh@430234/index_3776_av-p.m3u8", 0)
             self.gui.buildVideoLink(DisplayObject("Schleswig-Holstein", "", "", "", links, True), self, nodeCount)
 
     def buildPageMenuVideoListVerpasst(self, link, initCount):
@@ -186,8 +186,8 @@ class NDRMediathek(Mediathek):
             "<div class=\"teaserpadding\">"
             "(.*?)"
             "(</p>\n</div>\n</div>|\n</div>\n</div>\n</li>)", re.DOTALL)
-        regex_extractVideoItemHref = re.compile("<a title=\".*?\" href=\"(.*?/[^/]*?\.html)\".*?>", re.DOTALL)
-        regex_extractVideoItemDate = re.compile("<div class=\"subline\" style=\"cursor: pointer;\">.*?(\\d{2}\.\\d{2}\.\\d{4} \\d{2}:\\d{2})</div>")
+        regex_extractVideoItemHref = re.compile("<a title=\".*?\" href=\"(.*?/[^/]*?\\.html)\".*?>", re.DOTALL)
+        regex_extractVideoItemDate = re.compile("<div class=\"subline date\">(\\d{2}\\.\\d{2}\\.\\d{4} \\d{2}:\\d{2}) Uhr</div>")
 
         videoItems = regex_extractVideoItems.findall(htmlPage)
         nodeCount = initCount + len(videoItems)
@@ -195,7 +195,7 @@ class NDRMediathek(Mediathek):
         for videoItem in videoItems:
             print "link: {0}".format(link)
             print "videoItem: {0}".format(videoItem[0])
-            if "<div class=\"subline\">" not in videoItem[0]:
+            if not re.compile("<div class=\"subline( show)?\">").search(videoItem[0]):
                 continue
             videoLink = regex_extractVideoItemHref.search(videoItem[0]).group(1)
             try:
@@ -236,8 +236,8 @@ class NDRMediathek(Mediathek):
 
     def extractVideoInformation(self, videoLink, pubDate, nodeCount):
 
-        regexFindVideoLink = re.compile("https://.*(hq.mp4|hi.mp4|lo.flv)")
-        regexFindImageLink = re.compile("/.*v-ardgalerie.jpg")
+        regexFindVideoLink = re.compile("https://.*(hq\\.mp4|hi\\.mp4|lo\\.flv)")
+        regexFindImageLink = re.compile("/fernsehen/.*?v-content\\.jpg")
         regexFindMediaData = re.compile(
             "<div class=\"padding group\">\\s*?<div class=\"textinfo\">\\s*?<h\\d.*?>"
             "(.*?)"
@@ -245,7 +245,7 @@ class NDRMediathek(Mediathek):
             "(.*?)"
             "</p>", re.DOTALL
         )
-        if not videoLink.startswith(self.rootLink):
+        if not re.compile("https?://www.ndr.de").match(videoLink):
             videoLink = self.rootLink+videoLink
         videoPage = self.loadPage(videoLink)
 
