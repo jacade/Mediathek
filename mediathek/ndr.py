@@ -34,14 +34,14 @@ class NDRMediathek(Mediathek):
     def __init__(self, simpleXbmcGui):
         self.gui = simpleXbmcGui
 
-        self.rootLink = "http://www.ndr.de"
+        self.rootLink = "https://www.ndr.de"
 
         self.searchLink = self.rootLink+"/suche10.html?search_mediathek=1&"
 
         # Hauptmenue
         tmp_menu = []
         extractBroadcasts = re.compile("<a href=\"/mediathek/mediatheksuche105_broadcast-(.*?).html\" class=\"link_arrow\">(.*?)</a>")
-        htmlPage = self.loadPage("http://www.ndr.de/mediathek/sendungen_a-z/index.html").decode('utf-8')
+        htmlPage = self.loadPage("https://www.ndr.de/mediathek/sendungen_a-z/index.html").decode('utf-8')
 
         x = 0
         for menuNode in extractBroadcasts.finditer(htmlPage):
@@ -58,7 +58,7 @@ class NDRMediathek(Mediathek):
         ]
 
     def buildPageMenuSendungVerpasst(self, action):
-        htmlPage = self.loadPage("http://www.ndr.de/mediathek/sendung_verpasst/epg1490_display-onlyvideo.html")
+        htmlPage = self.loadPage("https://www.ndr.de/mediathek/sendung_verpasst/epg1490_display-onlyvideo.html")
 
         regex_verpasstNow = re.compile(
             '<h1 class="viewdate">\n.*?(\\d{2})\.(\\d{2})<span class="notbelow30em">\.(\\d{4})</span>'
@@ -138,25 +138,25 @@ class NDRMediathek(Mediathek):
             # Hamburg
             nodeCount = nodeCount+1
             links = {}
-            links[0] = SimpleLink("http://ndr_fs-lh.akamaihd.net/i/ndrfs_hh@119223/master.m3u8", 0)
+            links[0] = SimpleLink("https://ndr_fs-lh.akamaihd.net/i/ndrfs_hh@119223/master.m3u8", 0)
             self.gui.buildVideoLink(DisplayObject("Hamburg", "", "", "", links, True), self, nodeCount)
 
             # Mecklenburg-Vorpommern
             nodeCount = nodeCount+1
             links = {}
-            links[0] = SimpleLink("http://ndr_fs-lh.akamaihd.net/i/ndrfs_mv@119226/master.m3u8", 0)
+            links[0] = SimpleLink("https://ndr_fs-lh.akamaihd.net/i/ndrfs_mv@119226/master.m3u8", 0)
             self.gui.buildVideoLink(DisplayObject("Mecklenburg-Vorpommern", "", "", "", links, True), self, nodeCount)
 
             # Niedersachsen
             nodeCount = nodeCount+1
             links = {}
-            links[0] = SimpleLink("http://ndr_fs-lh.akamaihd.net/i/ndrfs_nds@119224/master.m3u8", 0)
+            links[0] = SimpleLink("https://ndr_fs-lh.akamaihd.net/i/ndrfs_nds@119224/master.m3u8", 0)
             self.gui.buildVideoLink(DisplayObject("Niedersachsen", "", "", "", links, True), self, nodeCount)
 
             # Schleswig-Holstein
             nodeCount = nodeCount+1
             links = {}
-            links[0] = SimpleLink("http://ndr_fs-lh.akamaihd.net/i/ndrfs_sh@119225/master.m3u8", 0)
+            links[0] = SimpleLink("https://ndr_fs-lh.akamaihd.net/i/ndrfs_sh@119225/master.m3u8", 0)
             self.gui.buildVideoLink(DisplayObject("Schleswig-Holstein", "", "", "", links, True), self, nodeCount)
 
     def buildPageMenuVideoListVerpasst(self, link, initCount):
@@ -172,7 +172,7 @@ class NDRMediathek(Mediathek):
         video_items = re.findall(re_video_item, htmlPage)
         nodeCount = initCount + len(video_items)
         for video_link in video_items:
-            if not re.compile("http://www.n-joy.de/.*").search(video_link):
+            if not re.compile("https://www.n-joy.de/.*").search(video_link):
                 print video_link
                 self.extractVideoInformation(video_link, None, nodeCount)
 
@@ -203,9 +203,9 @@ class NDRMediathek(Mediathek):
                 dateTime = time.strptime(dateString, "%d.%m.%Y %H:%M")
             except:
                 dateTime = None
-            # TODO: Some videos from Extra 3 are located on http://www.n-joy.de/
+            # TODO: Some videos from Extra 3 are located on https://www.n-joy.de/
             #       which cannot be parsed by this script, yet.
-            if not re.compile("http://www.n-joy.de/.*").search(videoLink):
+            if not re.compile("https://www.n-joy.de/.*").search(videoLink):
                 self.extractVideoInformation(videoLink, dateTime, nodeCount)
 
         # Pagination (weiter)
@@ -236,7 +236,7 @@ class NDRMediathek(Mediathek):
 
     def extractVideoInformation(self, videoLink, pubDate, nodeCount):
 
-        regexFindVideoLink = re.compile("http://.*(hq.mp4|hi.mp4|lo.flv)")
+        regexFindVideoLink = re.compile("https://.*(hq.mp4|hi.mp4|lo.flv)")
         regexFindImageLink = re.compile("/.*v-ardgalerie.jpg")
         regexFindMediaData = re.compile(
             "<div class=\"padding group\">\\s*?<div class=\"textinfo\">\\s*?<h\\d.*?>"
